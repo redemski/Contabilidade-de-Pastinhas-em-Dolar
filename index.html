@@ -4,15 +4,26 @@
     <meta charset="UTF-8">
     <title>PIETROBON</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css">
-    
+
     <script>
-        function calcular() {
+        async function getCotacaoDolar() {
+            try {
+                const response = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL');
+                const data = await response.json();
+                const cotacao = parseFloat(data.USDBRL.bid);
+                document.getElementById("cotacaoDolar").innerText = "Cotação do Dólar Atual: R$ " + cotacao.toFixed(2);
+                return cotacao;
+            } catch (error) {
+                alert("Erro ao buscar cotação do dólar. Verifique sua conexão.");
+                return null;
+            }
+        }
+
+        async function calcular() {
             const usd = parseFloat(document.getElementById("usd").value);
             const vfat = parseFloat(document.getElementById("vfat").value);
             const vnfe = parseFloat(document.getElementById("vnfe").value);
@@ -23,6 +34,10 @@
                 return;
             }
 
+            const cotacao = await getCotacaoDolar();
+            if (!cotacao) return;
+
+            const valorAdiantadoRS = usd * cotacao;
             let porcentagem = ((usd * 100) / vfat).toFixed(2);
             let baixa = ((vnfe * porcentagem) / 100).toFixed(2);
             let saldo = (baixa - vnfe).toFixed(2);
@@ -72,11 +87,8 @@
                 <button type="button" class="btn btn-primary w-100" onclick="calcular()">CALCULAR</button>
             </form>
 
-            <div class="text-center mb-3">
-                <a href="https://mercadocotacao.com/dolar-hoje/" id="USD" title="Cotação do Dólar Americano Hoje" name="mercado_cotacao" style="color: lightblue;">
-                    Dólar Hoje
-                </a>
-                <script async src="https://mercadocotacao.com/money/mercadocotacao.js"></script>
+            <div class="text-center mt-3">
+                <p id="cotacaoDolar" style="color: green;"></p>
             </div>
 
             <div id="porcentagem"></div>
@@ -86,5 +98,4 @@
         </div>
     </div>
 </body>
-
 </html>
