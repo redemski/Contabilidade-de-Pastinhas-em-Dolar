@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>PIETROBON</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script>
+        function calcular() {
+            const usd = parseFloat(document.getElementById("usd").value);
+            const vfat = parseFloat(document.getElementById("vfat").value);
+            const vnfe = parseFloat(document.getElementById("vnfe").value);
+            const vcnt = parseFloat(document.getElementById("vcnt").value);
+
+            if (isNaN(usd) || isNaN(vfat) || vfat === 0 || isNaN(vnfe) || isNaN(vcnt)) {
+                alert("Preencha todos os campos corretamente (nenhum pode estar vazio ou inválido).");
+                return;
+            }
+
+            let porcentagem = ((usd * 100) / vfat).toFixed(2);
+            let baixa = ((vnfe * porcentagem) / 100).toFixed(2);
+            let saldo = (baixa - vnfe).toFixed(2);
+            let variacao = (-baixa + vcnt).toFixed(2);
+
+            document.getElementById("porcentagem").innerHTML = "<h3>" + porcentagem + "% do Adiantamento</h3>";
+            document.getElementById("baixa").innerHTML = "<h3>R$ " + baixa + " de Baixa</h3>";
+            document.getElementById("saldo").innerHTML = "<h3>R$ " + saldo + " Saldo</h3>";
+
+            if (variacao < 0) {
+                document.getElementById("variacao").innerHTML = "<h3>R$ " + variacao + " de Variação Passiva</h3>";
+            } else {
+                document.getElementById("variacao").innerHTML = "<h3>R$ " + variacao + " de Variação Ativa</h3>";
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center min-vh-100">
+        <div id="container" class="container p-4 rounded">
+            <div class="text-center mb-4">
+                <img src="pietrobon.png" width="600" height="125" class="img-fluid">
+                <h2 class="mt-3">Contabilidade das Pastinhas:</h2>
+            </div>
+
+            <form>
+                <div class="mb-3">
+                    <label for="usd" class="form-label">Pagamento/Adiantamento USD$:</label>
+                    <input type="number" id="usd" class="form-control" step="0.01">
+                </div>
+
+                <div class="mb-3">
+                    <label for="vfat" class="form-label">Valor da Fatura USD$:</label>
+                    <input type="number" id="vfat" class="form-control" step="0.01">
+                </div>
+
+                <div class="mb-3">
+                    <label for="vnfe" class="form-label">Valor da Nota R$:</label>
+                    <input type="number" id="vnfe" class="form-control" step="0.01">
+                </div>
+
+                <div class="mb-3">
+                    <label for="vcnt" class="form-label">Valor Recebido R$ no Câmbio:</label>
+                    <input type="number" id="vcnt" class="form-control" step="0.01">
+                </div>
+
+                <button type="button" class="btn btn-primary w-100" onclick="calcular()">CALCULAR</button>
+            </form>
+
+            <div class="text-center mb-3">
+                <a href="https://mercadocotacao.com/dolar-hoje/" id="USD" title="Cotação do Dólar Americano Hoje" name="mercado_cotacao" style="color: lightblue;">
+                    Dólar Hoje
+                </a>
+                <script async src="https://mercadocotacao.com/money/mercadocotacao.js"></script>
+            </div>
+
+            <div id="porcentagem"></div>
+            <div id="baixa"></div>
+            <div id="saldo"></div>
+            <div id="variacao"></div>
+        </div>
+    </div>
+</body>
+</html>
